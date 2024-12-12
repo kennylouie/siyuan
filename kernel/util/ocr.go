@@ -187,7 +187,7 @@ func IsTesseractExtractable(p string) bool {
 var tesseractOCRLock = sync.Mutex{}
 
 func Tesseract(imgAbsPath string) (ret []map[string]interface{}) {
-	if ContainerStd != Container || !TesseractEnabled {
+	if !TesseractEnabled {
 		return
 	}
 
@@ -343,8 +343,23 @@ func filterTesseractLangs(langs []string) (ret []string) {
 	return ret
 }
 
+func isContainerTesseractSupported(container string) bool {
+	supportedContainers := []string{
+		ContainerStd,
+		ContainerDocker,
+	}
+
+	for _, v := range supportedContainers {
+		if v == container {
+			return true
+		}
+	}
+
+	return false
+}
+
 func getTesseractVer() (ret string) {
-	if ContainerStd != Container {
+	if !isContainerTesseractSupported(Container) {
 		return
 	}
 
